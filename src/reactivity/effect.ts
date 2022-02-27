@@ -1,7 +1,7 @@
 /*
  * @Author: seanchen
  * @Date: 2022-02-23 22:35:59
- * @LastEditTime: 2022-02-26 18:32:07
+ * @LastEditTime: 2022-02-27 12:38:34
  * @LastEditors: seanchen
  * @Description:
  */
@@ -11,7 +11,7 @@ let activeEffect;
 class ReactiveEffect {
   private _fn: any;
 
-  constructor(fn) {
+  constructor(fn, public scheduler?) {
     this._fn = fn;
   }
 
@@ -42,12 +42,16 @@ export function trigger(target, key) {
   const depsMap = targetMap.get(target);
   const dep = depsMap.get(key);
   for (const effect of dep) {
-    effect.run();
+    if (effect.scheduler) {
+      effect.scheduler();
+    } else {
+      effect.run();
+    }
   }
 }
 
-export function effect(fn) {
-  const _effect = new ReactiveEffect(fn);
+export function effect(fn, options: any = {}) {
+  const _effect = new ReactiveEffect(fn, options.scheduler);
   _effect.run();
   return _effect.run.bind(_effect);
 }
