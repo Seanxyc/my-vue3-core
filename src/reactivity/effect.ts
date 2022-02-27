@@ -1,7 +1,7 @@
 /*
  * @Author: seanchen
  * @Date: 2022-02-23 22:35:59
- * @LastEditTime: 2022-02-27 12:38:34
+ * @LastEditTime: 2022-02-27 13:52:45
  * @LastEditors: seanchen
  * @Description:
  */
@@ -29,19 +29,20 @@ export function track(target, key) {
     targetMap.set(target, depsMap);
   }
 
-  let dep = depsMap.get(key);
-  if (!dep) {
-    dep = new Set();
-    depsMap.set(key, dep);
+  let deps = depsMap.get(key);
+  if (!deps) {
+    deps = new Set();
+    depsMap.set(key, deps);
   }
 
-  dep.add(activeEffect);
+  deps.add(activeEffect);
 }
 
 export function trigger(target, key) {
+  // targetMap => key => deps
   const depsMap = targetMap.get(target);
-  const dep = depsMap.get(key);
-  for (const effect of dep) {
+  const deps = depsMap.get(key);
+  for (const effect of deps) {
     if (effect.scheduler) {
       effect.scheduler();
     } else {
@@ -52,6 +53,10 @@ export function trigger(target, key) {
 
 export function effect(fn, options: any = {}) {
   const _effect = new ReactiveEffect(fn, options.scheduler);
+
   _effect.run();
-  return _effect.run.bind(_effect);
+
+  const runner: any = _effect.run.bind(_effect);
+
+  return runner;
 }

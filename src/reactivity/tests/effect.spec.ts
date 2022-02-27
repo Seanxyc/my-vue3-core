@@ -1,7 +1,7 @@
 /*
  * @Author: seanchen
  * @Date: 2022-02-26 18:02:28
- * @LastEditTime: 2022-02-27 12:20:06
+ * @LastEditTime: 2022-02-27 12:56:37
  * @LastEditors: seanchen
  * @Description:
  */
@@ -63,5 +63,22 @@ describe("effect", () => {
     expect(dummy).toBe(1);
     run();
     expect(dummy).toBe(2);
+  });
+
+  it("stop", () => {
+    let dummy;
+    const obj = reactive({ prop: 1 });
+    const runner = effect(() => {
+      dummy = obj.prop;
+    });
+    obj.prop = 2;
+    expect(dummy).toBe(2);
+    stop(runner);
+    obj.prop = 3;
+    expect(dummy).toBe(2);
+
+    // stopped effect should still be manually callable
+    runner();
+    expect(dummy).toBe(3);
   });
 });
