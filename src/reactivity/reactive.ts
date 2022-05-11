@@ -3,24 +3,15 @@
  * @Date: 2022-05-04 22:17:56
  * @LastEditTime: 2022-05-04 22:29:08
  * @LastEditors: seanchen
- * @Description:
+ * @Description: reactivity
  */
 import { track, trigger } from "./effect";
+import { mutableHandler, readonlyHandler } from './baseHandlers'
 
 export function reactive(raw) {
-  return new Proxy(raw, {
-    get(target, key) {
-      const res = Reflect.get(target, key);
-      // 收集依赖
-      track(target, key);
-      return res;
-    },
+  return new Proxy(raw, mutableHandler);
+}
 
-    set(target, key, value) {
-      const res = Reflect.set(target, key, value);
-      // 触发依赖
-      trigger(target, key);
-      return res;
-    },
-  });
+export function readonly(raw) {
+  return new Proxy(raw, readonlyHandler)
 }
