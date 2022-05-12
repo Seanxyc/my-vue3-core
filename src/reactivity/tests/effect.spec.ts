@@ -1,7 +1,7 @@
 /*
  * @Author: seanchen
  * @Date: 2022-05-04 22:11:41
- * @LastEditTime: 2022-05-05 00:53:59
+ * @LastEditTime: 2022-05-12 23:55:46
  * @LastEditors: seanchen
  * @Description:
  */
@@ -83,12 +83,14 @@ describe("effect", () => {
     obj.prop = 2;
     expect(dummy).toBe(2);
     stop(runner);
-    obj.prop = 3;
+    obj.prop = 3; // 仅触发set
+    expect(dummy).toBe(2);
+    obj.prop++; // obj.prop = obj.prop + 1 会触发get
     expect(dummy).toBe(2);
 
     // stopped effect should still be manually callable
     runner();
-    expect(dummy).toBe(3);
+    expect(dummy).toBe(4);
   });
 
   // onStop

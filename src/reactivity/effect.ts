@@ -1,13 +1,14 @@
 /*
  * @Author: seanchen
  * @Date: 2022-05-04 22:28:00
- * @LastEditTime: 2022-05-05 00:57:03
+ * @LastEditTime: 2022-05-13 00:01:53
  * @LastEditors: seanchen
  * @Description:
  */
 import { extend } from "../shared";
 
 let activeEffect;
+let shouldTrack;
 
 class ReactiveEffect {
   private _fn: any;
@@ -22,8 +23,18 @@ class ReactiveEffect {
   }
 
   run() {
+    if (!this.active) {
+      return this._fn();
+    }
+
+    shouldTrack = true;
     activeEffect = this;
-    return this._fn();
+    const result = this._fn();
+
+    // reset
+    shouldTrack = false;
+
+    return result;
   }
 
   stop() {
@@ -40,6 +51,9 @@ class ReactiveEffect {
 
 let targetMap = new Map();
 export function track(target, key) {
+  if (!isTracking()) return;
+
+  // target -> key -> dep
   let depsMap = targetMap.get(target);
   if (!depsMap) {
     // 初始化
@@ -54,10 +68,14 @@ export function track(target, key) {
     depsMap.set(key, dep);
   }
 
-  if (!activeEffect) return;
+  if (dep.has(activeEffect)) return; // 已经在dep中，不需要重复收集
 
   dep.add(activeEffect);
   activeEffect.deps.push(dep);
+}
+
+function isTracking() {
+  return shouldTrack && activeEffect !== undefined;
 }
 
 export function trigger(target, key) {
@@ -82,6 +100,7 @@ function cleanupEffect(effect) {
   effect.deps.forEach((dep: any) => {
     dep.delete(effect);
   });
+  effect.deps.length = 0;
 }
 
 export function effect(fn, options: any = {}) {
