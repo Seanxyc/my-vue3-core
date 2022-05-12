@@ -5,13 +5,29 @@
  * @LastEditors: seanchen
  * @Description: reactivity
  */
-import { track, trigger } from "./effect";
-import { mutableHandler, readonlyHandler } from './baseHandlers'
+import { mutableHandler, readonlyHandler } from './baseHandlers';
+
+export const enum ReactiveFlags {
+  IS_REACTIVE = "__v_isReactive",
+  IS_READONLY = "__v_isReadonly"
+}
 
 export function reactive(raw) {
-  return new Proxy(raw, mutableHandler);
+  return createReactiveObject(raw, mutableHandler)
 }
 
 export function readonly(raw) {
-  return new Proxy(raw, readonlyHandler)
+  return createReactiveObject(raw, readonlyHandler)
+}
+
+export function isReactive(value) {
+  return !!value[ReactiveFlags.IS_REACTIVE]
+}
+
+export function isReadonly(value) {
+  return !!value[ReactiveFlags.IS_READONLY]
+}
+
+function createReactiveObject(target, baseHandler) {
+  return new Proxy(target, baseHandler)
 }

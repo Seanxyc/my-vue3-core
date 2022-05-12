@@ -5,16 +5,18 @@
  * @LastEditors: seanchen
  * @Description:
  */
-import { reactive } from "../reactive";
+import { reactive, isReactive } from "../reactive";
 
 describe("reactive", () => {
   it("happy path", () => {
     const original = { foo: 1 };
-    const observered = reactive(original);
+    const observed = reactive(original);
 
     // 1. observered !== original
-    expect(observered).not.toBe(original);
+    expect(observed).not.toBe(original);
     // 2. 调用foo时返回值
-    expect(observered.foo).toBe(1);
+    expect(observed.foo).toBe(1);
+
+    expect(isReactive(observed)).toBe(true)
   });
 });
