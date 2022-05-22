@@ -70,11 +70,15 @@ export function track(target, key) {
 
   if (dep.has(activeEffect)) return; // 已经在dep中，不需要重复收集
 
+  trackEffects(dep)
+}
+
+export function trackEffects(dep) {
   dep.add(activeEffect);
   activeEffect.deps.push(dep);
 }
 
-function isTracking() {
+export function isTracking() {
   return shouldTrack && activeEffect !== undefined;
 }
 
@@ -82,6 +86,10 @@ export function trigger(target, key) {
   const depsMap = targetMap.get(target);
   const dep = depsMap.get(key);
 
+  triggerEffects(dep)
+}
+
+export function triggerEffects(dep) {
   for (const effect of dep) {
     if (effect.scheduler) {
       effect.scheduler();
