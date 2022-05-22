@@ -1,7 +1,7 @@
 /*
  * @Author: seanchen
  * @Date: 2022-05-22 17:02:13
- * @LastEditTime: 2022-05-22 17:06:18
+ * @LastEditTime: 2022-05-22 17:20:16
  * @LastEditors: seanchen
  * @Description:
  */
@@ -13,6 +13,7 @@ class RefImpl {
   private _value: any;
   private _rawValue: any;
   public dep;
+  public __v_isRef = true;
 
   constructor(value) {
     this._rawValue = value;
@@ -50,4 +51,12 @@ function convert(val) {
 
 export function ref(value) {
   return new RefImpl(value);
+}
+
+export function isRef(ref) {
+  return !!ref.__v_isRef;
+}
+
+export function unRef(ref) {
+  return isRef(ref) ? ref.value : ref;
 }
