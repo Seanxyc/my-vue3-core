@@ -1,7 +1,7 @@
 /*
  * @Author: seanchen
  * @Date: 2022-05-04 22:28:00
- * @LastEditTime: 2022-05-13 00:01:53
+ * @LastEditTime: 2022-05-22 17:06:28
  * @LastEditors: seanchen
  * @Description:
  */
@@ -70,7 +70,7 @@ export function track(target, key) {
 
   if (dep.has(activeEffect)) return; // 已经在dep中，不需要重复收集
 
-  trackEffects(dep)
+  trackEffects(dep);
 }
 
 export function trackEffects(dep) {
@@ -86,7 +86,7 @@ export function trigger(target, key) {
   const depsMap = targetMap.get(target);
   const dep = depsMap.get(key);
 
-  triggerEffects(dep)
+  triggerEffects(dep);
 }
 
 export function triggerEffects(dep) {
