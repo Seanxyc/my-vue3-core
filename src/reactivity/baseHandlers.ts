@@ -1,18 +1,36 @@
+/*
+ * @Author: seanchen
+ * @Date: 2022-05-22 15:17:51
+ * @LastEditTime: 2022-05-22 15:19:33
+ * @LastEditors: seanchen
+ * @Description:
+ */
+import { extend, isObject } from "../shared";
 import { track, trigger } from "./effect";
-import { ReactiveFlags } from "./reactive";
+import { reactive, ReactiveFlags, readonly } from "./reactive";
 
 const get = createGetter();
 const set = createSetter();
 const readonlyGet = createGetter(true);
+const shallowReadonlyGet = createGetter(true, true);
 
-function createGetter(isReadonly = false) {
+function createGetter(isReadonly = false, isShallow = false) {
   return (target, key) => {
-    const res = Reflect.get(target, key);
-
     if (key === ReactiveFlags.IS_REACTIVE) {
       return !isReadonly;
     } else if (key === ReactiveFlags.IS_READONLY) {
       return isReadonly;
+    }
+
+    const res = Reflect.get(target, key);
+
+    if (isShallow) {
+      return res;
+    }
+
+    // reactive、readonly嵌套逻辑
+    if (isObject(res)) {
+      return isReadonly ? readonly(res) : reactive(res);
     }
 
     if (!isReadonly) {
@@ -46,3 +64,7 @@ export const readonlyHandler = {
     return true;
   },
 };
+
+export const shallowReadonlyHandler = extend({}, readonlyHandler, {
+  get: shallowReadonlyGet,
+});
