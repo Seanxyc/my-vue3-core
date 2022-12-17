@@ -1,12 +1,10 @@
 import { ReactiveEffect } from "./effect"
 
-
 class ComputedRefImpl {
   private _getter: any
-  private _value: any
   private _dirty: boolean = true
+  private _value: any
   private _effect: any
-
   constructor(getter) {
     this._getter = getter
 
@@ -19,11 +17,13 @@ class ComputedRefImpl {
   }
 
   get value() {
-    // dirty控制避免重复计算
+    // 一开始执行getter
     if (this._dirty) {
       this._dirty = false
       this._value = this._effect.run()
     }
+
+    // 当依赖的响应式对象发生改变时
 
     return this._value
   }

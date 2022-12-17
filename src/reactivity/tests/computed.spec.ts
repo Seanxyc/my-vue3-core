@@ -1,10 +1,10 @@
-import { computed } from "../computed"
-import { reactive } from "../reactive"
+import { computed } from '../computed'
+import { reactive } from '../reactive'
 
-describe("computed", () => {
-  it("happy path", () => {
+describe('computed', () => {
+  it('happy path', () => {
     const user = reactive({
-      age: 1
+      age: 1,
     })
 
     const age = computed(() => {
@@ -14,9 +14,9 @@ describe("computed", () => {
     expect(age.value).toBe(1)
   })
 
-  it("should compute lazily", () => {
+  it('should compute lazily', () => {
     const value = reactive({
-      foo: 1
+      foo: 1,
     })
     const getter = jest.fn(() => {
       return value.foo
@@ -35,7 +35,7 @@ describe("computed", () => {
 
     // should not computed until needed
     value.foo = 2
-    expect(getter).toHaveBeenCalledTimes(1)
+    expect(getter).toHaveBeenCalledTimes(1) // 不再次调用getter
 
     // now it should compute
     expect(cValue.value).toBe(2)
