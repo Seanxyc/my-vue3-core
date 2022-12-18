@@ -1,8 +1,8 @@
-export function createVNode(type: any, props?: any, children?: any) {
+export function createVNode(type, props?, children?) {
   const vnode = {
     type,
     props,
-    children,
+    children
   }
 
   return vnode
