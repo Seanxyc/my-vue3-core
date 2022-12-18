@@ -1,1 +1,5 @@
-createApp().mount('#app')
+import { createApp } from '../../lib/my-vue3-core.esm.js'
+import { App } from './App.js'
+
+const rootContainer = document.querySelector('#app')
+createApp(App).mount(rootContainer)

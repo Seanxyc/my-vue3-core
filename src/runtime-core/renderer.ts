@@ -6,8 +6,14 @@ export function render(vnode: any, container) {
 }
 
 function patch(vnode, container) {
+  // 处理element类型
+  processElement()
   // 处理组件类型
   propcessComponent(vnode, container)
+}
+
+function processElement() {
+
 }
 
 /**

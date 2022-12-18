@@ -1,3 +1,5 @@
+import { h } from '../../lib/my-vue3-core.esm.js'
+
 export const App = {
   // .vue
   // <template></template>
