@@ -1,26 +1,20 @@
-import { isObject } from "../shared/index"
 import { createComponentInstance, setupComponent } from "./component"
 
-export function render(vnode: any, container: any) {
+export function render(vnode: any, container) {
   // patch
   patch(vnode, container)
 }
 
 function patch(vnode, container) {
-  if (typeof vnode.type === 'string') {
-    // 处理element类型
-    processElement(vnode, container)
-  } else if (isObject(vnode.type)) {
-    // 处理组件类型
-    propcessComponent(vnode, container)
-  }
+  console.log('123',vnode.type);
+  
+  // 处理element类型
+  processElement()
+  // 处理组件类型
+  propcessComponent(vnode, container)
 }
 
-function processElement(vnode: any, container: any) {
-  mountElement(vnode, container)
-}
-
-function mountElement(vnode: any, container: any) {
+function processElement() {
 
 }
 
