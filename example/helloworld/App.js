@@ -9,11 +9,13 @@ export const App = {
       id: "root",
       class: ["red", "hard"]
     },
-      // 'hello, mini-vue'
-      [
-        h("p", { class: 'pink' }, "hi"),
-        h("p", { class: 'skyblue' }, "mini-vue")
-      ]
+      // setupState
+      // this.$el
+      'hello, ' + this.msg
+      // [
+      //   h("p", { class: 'pink' }, "hi"),
+      //   h("p", { class: 'skyblue' }, "mini-vue")
+      // ]
     )
   },
 

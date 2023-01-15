@@ -75,7 +75,8 @@ function mountComponent(vnode: any, container: any) {
 }
 
 function setupRenderEffect(instance: any, container: any) {
-  const subTree = instance.render() // 虚拟节点树
+  const { proxy } = instance
+  const subTree = instance.render.call(proxy) // 虚拟节点树
 
   patch(subTree, container)
 
