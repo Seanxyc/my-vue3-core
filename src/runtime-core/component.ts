@@ -1,3 +1,5 @@
+import { PublicInstanceProxyHandlers } from "./componentPublicInstance"
+
 /**
 * @description 创建实例对象，存储组件的属性(props, slots...)
 */
@@ -27,15 +29,7 @@ function setupStatefulComponent(instance: any) {
   const Component = instance.type
 
   // ctx
-  instance.proxy = new Proxy({}, {
-    get(target, key) {
-      // setupState
-      const { setupState } = instance
-      if (key in setupState) {
-        return setupState[key]
-      }
-    }
-  })
+  instance.proxy = new Proxy({ _: instance }, PublicInstanceProxyHandlers)
 
   const { setup } = Component
 

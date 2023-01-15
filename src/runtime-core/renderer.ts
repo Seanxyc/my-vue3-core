@@ -21,7 +21,8 @@ function processElement(vnode: any, container: any) {
 }
 
 function mountElement(vnode: any, container: any) {
-  const el = document.createElement(vnode.type) // string | array
+  // vnode -> element
+  const el = (vnode.el = document.createElement(vnode.type)) // string | array
   const { children, props } = vnode
 
   if (typeof children === "string") {
@@ -63,22 +64,24 @@ function propcessComponent(vnode: any, container: any) {
 /**
   * @description 组件初始化
   */
-function mountComponent(vnode: any, container: any) {
+function mountComponent(initialVNode: any, container: any) {
   // 创建实例
-  const instance = createComponentInstance(vnode)
+  const instance = createComponentInstance(initialVNode)
 
   // 执行setup
   setupComponent(instance)
 
   // 调用render
-  setupRenderEffect(instance, container)
+  setupRenderEffect(instance, initialVNode, container)
 }
 
-function setupRenderEffect(instance: any, container: any) {
+function setupRenderEffect(instance: any, initialVNode: any, container: any) {
   const { proxy } = instance
   const subTree = instance.render.call(proxy) // 虚拟节点树
 
   patch(subTree, container)
+
+  initialVNode.el = subTree.el
 
   // TODO: 
   // vnode -> patch
