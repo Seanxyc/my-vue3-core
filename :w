@@ -57,6 +57,8 @@ function mountElement(vnode: any, container: any) {
  * @description 处理数组类型children
  */
 function mountChildren(vnode: any, container: any) {
+  console.log('vnode', vnode);
+
   vnode.forEach(v => {
     patch(v, container)
   });
