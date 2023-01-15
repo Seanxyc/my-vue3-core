@@ -9,8 +9,6 @@ export function createVNode(type, props?, children?) {
     el: null
   }
 
-  debugger
-
   if (typeof children === "string") {
     vnode.shapeFlag |= ShapeFlags.TEXT_CHILDREN // 或运算
   } else if (Array.isArray(children)) {
