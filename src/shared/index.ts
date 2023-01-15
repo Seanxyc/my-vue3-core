@@ -16,3 +16,5 @@ export const hasChanged = (val, newVal) => {
 };
 
 export const isEvent = (key: string) => /^on[A-Z]/.test(key)
+
+export const hasOwn = (val, key) => Object.prototype.hasOwnProperty.call(val, key)

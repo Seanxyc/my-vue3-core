@@ -5,6 +5,7 @@
  * @LastEditors: seanchen
  * @Description: reactivity
  */
+import { isObject } from "../shared/index";
 import {
   mutableHandler,
   readonlyHandler,
@@ -41,5 +42,9 @@ export function isProxy(value) {
 }
 
 function createReactiveObject(target, baseHandler) {
+  if (!isObject(target)) {
+    console.log("target ${target} has to be an object");
+    return
+  }
   return new Proxy(target, baseHandler);
 }
