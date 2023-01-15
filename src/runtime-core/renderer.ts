@@ -21,12 +21,41 @@ function processElement(vnode: any, container: any) {
 }
 
 function mountElement(vnode: any, container: any) {
+  const el = document.createElement(vnode.type) // string | array
+  const { children, props } = vnode
 
+  if (typeof children === "string") {
+    el.textContent = children
+    // props
+  } else if (Array.isArray(children)) {
+    // 每个child调用patch
+    mountChildren(children, el)
+  }
+
+  for (const key in props) {
+    if (props.hasOwnProperty(key)) {
+      const element = props[key];
+      el.setAttribute(key, element)
+    }
+  }
+
+  container.append(el)
+}
+
+
+
+/**
+ * @description 处理数组类型children
+ */
+function mountChildren(vnode: any, container: any) {
+  vnode.forEach(v => {
+    patch(v, container)
+  });
 }
 
 /**
-* @description 处理组件类型
-*/
+ * @description 处理组件类型
+ */
 function propcessComponent(vnode: any, container: any) {
   mountComponent(vnode, container)
 }
@@ -54,3 +83,4 @@ function setupRenderEffect(instance: any, container: any) {
   // vnode -> patch
   // vnode -> vnode -> element -> mountElement
 }
+
