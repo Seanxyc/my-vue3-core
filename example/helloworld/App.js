@@ -13,12 +13,12 @@ export const App = {
     return h('div', {
       id: "root",
       class: ["red", "hard"],
-      onClick: () => {
-        console.log('click')
-      },
-      onMousedown: () => {
-        console.log('mousedown')
-      }
+      // onClick: () => {
+      //  console.log('click')
+      // },
+      // onMousedown: () => {
+      // console.log('mousedown')
+      // }
     },
       // setupState
       // this.$el
@@ -30,7 +30,13 @@ export const App = {
       [
         h("div", {}, "hi," + this.msg),
         h(Foo, {
-          count: 1
+          count: 1,
+          onEmit: (a, b) => {
+            console.log(a, b)
+          },
+          onEmitFoo: () => {
+            console.log('emit foo')
+          }
         })
       ]
     )
