@@ -44,9 +44,15 @@ function setupStatefulComponent(instance: any) {
 
   // 如果组件实例定义了setup
   if (setup) {
+
+    // 赋值当前实例对象
+    setCurrentInstance(instance)
+
     const setupResult = setup(shallowReadonly(instance.props), {
       emit: instance.emit
     }) // Function/Object
+
+    currentInstance = null
 
     handleSetupResult(instance, setupResult)
   }
@@ -76,3 +82,14 @@ function finishComponentSetup(instance: any) {
     instance.render = Component.render
   }
 }
+
+
+let currentInstance = null
+export function getCurrentInstance() {
+  return currentInstance
+}
+
+function setCurrentInstance(instance) {
+  currentInstance = instance
+}
+
