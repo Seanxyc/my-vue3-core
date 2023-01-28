@@ -1,22 +1,46 @@
 import { isEvent, isObject } from "../shared/index"
 import { ShapeFlags } from "../shared/ShapeFlags"
 import { createComponentInstance, setupComponent } from "./component"
+import { Fragment, Text } from "./vnode"
 
 export function render(vnode: any, container: any) {
   // patch
   patch(vnode, container)
 }
 
-function patch(vnode, container) {
+function patch(vnode: any, container: any) {
   // ShapeFlags   element | stateful component
-  const { shapeFlag } = vnode
-  if (shapeFlag & ShapeFlags.ELEMENT) { // 与运算比较
-    // 处理element类型
-    processElement(vnode, container)
-  } else if (shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
-    // 处理组件类型
-    propcessComponent(vnode, container)
+  const { type, shapeFlag } = vnode
+
+  switch (type) {
+    case Fragment:
+      processFragment(vnode, container)
+      break;
+
+    case Text:
+      processText(vnode, container)
+      break;
+
+    default:
+      if (shapeFlag & ShapeFlags.ELEMENT) { // 与运算比较
+        // 处理element类型
+        processElement(vnode, container)
+      } else if (shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
+        // 处理组件类型
+        propcessComponent(vnode, container)
+      }
+      break;
   }
+}
+
+function processFragment(vnode: any, container: any) {
+  mountChildren(vnode, container)
+}
+
+function processText(vnode: any, container: any) {
+  const { children } = vnode
+  const textNode = document.createTextNode(children)
+  container.append(textNode)
 }
 
 function processElement(vnode: any, container: any) {
@@ -33,7 +57,7 @@ function mountElement(vnode: any, container: any) {
     el.textContent = children
   } else if (shapeFlag & ShapeFlags.ARRAY_CHILDREN) {
     // 每个child调用patch
-    mountChildren(children, el)
+    mountChildren(vnode, el)
   }
 
   for (const key in props) {
@@ -51,13 +75,11 @@ function mountElement(vnode: any, container: any) {
   container.append(el)
 }
 
-
-
 /**
  * @description 处理数组类型children
  */
 function mountChildren(vnode: any, container: any) {
-  vnode.forEach(v => {
+  vnode.children.forEach(v => {
     patch(v, container)
   });
 }
