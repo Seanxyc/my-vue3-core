@@ -8,7 +8,6 @@ import { initSlots } from "./componentSlots"
 * @description 创建实例对象，存储组件的属性(props, slots...)
 */
 export function createComponentInstance(vnode: any, parent: any) {
-  console.log("crearteComponentInstance", parent);
   const component = {
     vnode,
     type: vnode.type,
