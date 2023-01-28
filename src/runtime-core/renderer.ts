@@ -10,12 +10,12 @@ import { Fragment, Text } from "./vnode"
 * @param patchProp 
 * @param insert 
 */
-export function createRender(options) {
+export function createRenderer(options) {
 
   const {
-    createElement,
-    patchProp,
-    insert
+    createElement: hostCreateElement,
+    patchProp: hostPatchProp,
+    insert: hostInsert
   } = options
 
   function render(vnode: any, container: any) {
@@ -68,7 +68,7 @@ export function createRender(options) {
     // 基于DOM
     // const el = (vnode.el = document.createElement(vnode.type)) // string | array
     // 自定义渲染
-    const el = (vnode.el = createElement(vnode.type)) // string | array
+    const el = (vnode.el = hostCreateElement(vnode.type)) // string | array
     const { children, props, shapeFlag } = vnode
 
     // text children | array children
@@ -90,14 +90,14 @@ export function createRender(options) {
         //   el.setAttribute(key, val)
         // }
         // 自定义渲染
-        patchProp(el, key, val)
+        hostPatchProp(el, key, val)
       }
     }
 
     // 基于DOM
     // container.append(el)
     // 自定义渲染
-    insert(el, container)
+    hostInsert(el, container)
   }
 
   /**

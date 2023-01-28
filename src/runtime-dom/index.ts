@@ -1,4 +1,4 @@
-import { createRender } from '../runtime-core'
+import { createRenderer } from '../runtime-core'
 import { isEvent } from '../shared'
 
 function createElement(type: any) {
@@ -18,7 +18,7 @@ function insert(el, parent) {
   parent.append(el)
 }
 
-const renderer: any = createRender({
+const renderer: any = createRenderer({
   createElement,
   patchProp,
   insert
