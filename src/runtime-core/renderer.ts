@@ -1,4 +1,5 @@
 import { effect } from "../reactivity/effect"
+import getSequence from "../shared/getSequence"
 import { EMPTY_OBJ, isEvent, isObject } from "../shared/index"
 import { ShapeFlags } from "../shared/ShapeFlags"
 import { createComponentInstance, setupComponent } from "./component"
@@ -202,6 +203,10 @@ export function createRenderer(options) {
       const toBePatched = e2 - s2 + 1 // 新节点数量
       let patched = 0 // 已处理的节点数量
       const keyToNewIndexMap = new Map() // 映射表
+      const newIndexToOldIndexMap = new Array(toBePatched) // 最长递增子序列映射表
+      let moved = false // 是否需要移动位置
+      let maxNewIndexSoFar = 0
+      for (let j = 0; j < toBePatched; j++) newIndexToOldIndexMap[j] = 0
 
       // 建立映射关系
       for (let j = s2; j <= e2; j++) {
@@ -217,7 +222,7 @@ export function createRenderer(options) {
           hostRemove(prevChild.el)
         }
 
-        let newIndex
+        let newIndex // 匹配节点的index
         if (prevChild.key !== null) {
           newIndex = keyToNewIndexMap.get(prevChild.key) // (1)根据映射查找
         } else {
@@ -233,8 +238,46 @@ export function createRenderer(options) {
           // 新中间节点没找到该旧节点----删除
           hostRemove(prevChild.el)
         } else {
+          // 如果新节点大于旧
+          if (newIndex >= maxNewIndexSoFar) {
+            maxNewIndexSoFar = newIndex
+          } else {
+            // 否则移动位置
+            moved = true
+          }
+
+          newIndexToOldIndexMap[newIndex - s2] = j + 1
           patch(prevChild, c2[newIndex], container, parentComponent, null)
           patched++
+        }
+      }
+
+      const increasingNewIndexSequence = moved ? getSequence(newIndexToOldIndexMap) : [] // 最长递增子序列
+      // let p = 0
+      // for (let j = 0; j < toBePatched; j++) {
+      //   if (j !== increasingNewIndexSequence[p]) {
+      //     // 移动位置
+      //   } else {
+      //     p++
+      //   }
+      // }
+      // 倒序
+      let p = increasingNewIndexSequence.length - 1
+      for (let j = toBePatched - 1; j >= 0; j--) {
+        const nextIndex = j + s2
+        const nextChild = c2[nextIndex]
+        const anchor = nextIndex + 1 < l2 ? c2[nextIndex + 1].el : null
+
+        if (newIndexToOldIndexMap[j] === 0) {
+          // 创建新节点
+          patch(null, nextChild, container, parentComponent, anchor)
+        } else if (moved) {
+          if (p < 0 || j !== increasingNewIndexSequence[p]) {
+            // 移动位置
+            hostInsert(nextChild.el, container, anchor)
+          } else {
+            p++
+          }
         }
       }
     }

@@ -106,20 +106,88 @@ import { h, ref } from '../../lib/my-vue3-core.esm.js'
 // 4.2 优化
 // A B (C E D) F G
 // A B (E C) F G
+/* const prevChildren = [ */
+/*   h('p', { key: 'A' }, 'A'), */
+/*   h('p', { key: 'B' }, 'B'), */
+/*   h('p', { key: 'C', id: 'c-prev' }, 'C'), */
+/*   h('p', { key: 'E' }, 'E'), */
+/*   h('p', { key: 'D' }, 'D'), */
+/*   h('p', { key: 'F' }, 'F'), */
+/*   h('p', { key: 'G' }, 'G'), */
+/* ] */
+/* const nextChildren = [ */
+/*   h('p', { key: 'A' }, 'A'), */
+/*   h('p', { key: 'B' }, 'B'), */
+/*   h('p', { key: 'E' }, 'E'), */
+/*   h('p', { key: 'C', id: 'c-next' }, 'C'), */
+/*   h('p', { key: 'F' }, 'F'), */
+/*   h('p', { key: 'G' }, 'G'), */
+/* ] */
+// 4.3. 
+// A B (C D E) F G
+// A B (E C D) F G
+// 最长子序列 【1，2】
+/* const prevChildren = [ */
+/*   h('p', { key: 'A' }, 'A'), */
+/*   h('p', { key: 'B' }, 'B'), */
+/*   h('p', { key: 'C' }, 'C'), */
+/*   h('p', { key: 'D' }, 'D'), */
+/*   h('p', { key: 'E' }, 'E'), */
+/*   h('p', { key: 'F' }, 'F'), */
+/*   h('p', { key: 'G' }, 'G'), */
+/* ] */
+/* const nextChildren = [ */
+/*   h('p', { key: 'A' }, 'A'), */
+/*   h('p', { key: 'B' }, 'B'), */
+/*   h('p', { key: 'E' }, 'E'), */
+/*   h('p', { key: 'C' }, 'C'), */
+/*   h('p', { key: 'D' }, 'D'), */
+/*   h('p', { key: 'F' }, 'F'), */
+/* ] */
+/*   h('p', { key: 'G' }, 'G'), */
+
+// 4.4 包含新节点
+// A B (C E) F G
+// A B (E C D) F G
+/* const prevChildren = [ */
+/*   h('p', { key: 'A' }, 'A'), */
+/*   h('p', { key: 'B' }, 'B'), */
+/*   h('p', { key: 'C' }, 'C'), */
+/*   h('p', { key: 'E' }, 'E'), */
+/*   h('p', { key: 'F' }, 'F'), */
+/*   h('p', { key: 'G' }, 'G'), */
+/* ] */
+/* const nextChildren = [ */
+/*   h('p', { key: 'A' }, 'A'), */
+/*   h('p', { key: 'B' }, 'B'), */
+/*   h('p', { key: 'E' }, 'E'), */
+/*   h('p', { key: 'C' }, 'C'), */
+/*   h('p', { key: 'D' }, 'D'), */
+/*   h('p', { key: 'F' }, 'F'), */
+/*   h('p', { key: 'G' }, 'G'), */
+/* ] */
+
+
+// 4.4 综合例子
+// A B (C D E Z) F G
+// A B (D C Y E) F G
 const prevChildren = [
   h('p', { key: 'A' }, 'A'),
   h('p', { key: 'B' }, 'B'),
-  h('p', { key: 'C', id: 'c-prev' }, 'C'),
-  h('p', { key: 'E' }, 'E'),
+  h('p', { key: 'C' }, 'C'),
   h('p', { key: 'D' }, 'D'),
+  h('p', { key: 'E' }, 'E'),
+  h('p', { key: 'Z' }, 'Z'),
   h('p', { key: 'F' }, 'F'),
   h('p', { key: 'G' }, 'G'),
 ]
 const nextChildren = [
   h('p', { key: 'A' }, 'A'),
   h('p', { key: 'B' }, 'B'),
+  h('p', { key: 'D' }, 'D'),
+  h('p', { key: 'C' }, 'C'),
+  h('p', { key: 'Y' }, 'Y'),
   h('p', { key: 'E' }, 'E'),
-  h('p', { key: 'C', id: 'c-next' }, 'C'),
   h('p', { key: 'F' }, 'F'),
   h('p', { key: 'G' }, 'G'),
 ]
