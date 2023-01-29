@@ -194,6 +194,49 @@ export function createRenderer(options) {
         hostRemove(c1[i].el)
         i++
       }
+    } else {
+      // 4. 中间对比
+      let s1 = i // 老节点起始位置
+      let s2 = i
+
+      const toBePatched = e2 - s2 + 1 // 新节点数量
+      let patched = 0 // 已处理的节点数量
+      const keyToNewIndexMap = new Map() // 映射表
+
+      // 建立映射关系
+      for (let j = s2; j <= e2; j++) {
+        const nextChild = c2[j]
+        keyToNewIndexMap.set(nextChild.key, j)
+      }
+
+      for (let j = s1; j <= e1; j++) {
+        const prevChild = c1[j]
+
+        if (patched >= toBePatched) {
+          // 所有新节点都已patch过，remove剩余旧节点
+          hostRemove(prevChild.el)
+        }
+
+        let newIndex
+        if (prevChild.key !== null) {
+          newIndex = keyToNewIndexMap.get(prevChild.key) // (1)根据映射查找
+        } else {
+          // (2)没有设置key，遍历查找
+          for (let k = s2; k < e2; k++) {
+            if (isSameVNodeType(prevChild, c2[k])) {
+              newIndex = k
+              break
+            }
+          }
+        }
+        if (newIndex === undefined) {
+          // 新中间节点没找到该旧节点----删除
+          hostRemove(prevChild.el)
+        } else {
+          patch(prevChild, c2[newIndex], container, parentComponent, null)
+          patched++
+        }
+      }
     }
   }
 

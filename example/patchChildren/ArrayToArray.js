@@ -47,16 +47,16 @@ import { h, ref } from '../../lib/my-vue3-core.esm.js'
 // 2.2 右侧
 // (A B)
 // C (A B) 
-const prevChildren = [
-  h('p', { key: 'A' }, 'A'),
-  h('p', { key: 'B' }, 'B'),
-]
-const nextChildren = [
-  h('p', { key: 'D' }, 'D'),
-  h('p', { key: 'C' }, 'C'),
-  h('p', { key: 'A' }, 'A'),
-  h('p', { key: 'B' }, 'B'),
-]
+/* const prevChildren = [ */
+/*   h('p', { key: 'A' }, 'A'), */
+/*   h('p', { key: 'B' }, 'B'), */
+/* ] */
+/* const nextChildren = [ */
+/*   h('p', { key: 'D' }, 'D'), */
+/*   h('p', { key: 'C' }, 'C'), */
+/*   h('p', { key: 'A' }, 'A'), */
+/*   h('p', { key: 'B' }, 'B'), */
+/* ] */
 
 // 3. 旧的比新的长
 // 3.1 左侧
@@ -83,6 +83,46 @@ const nextChildren = [
 /*   h('p', { key: 'C' }, 'C'), */
 /*   h('p', { key: 'D' }, 'D'), */
 /* ] */
+
+// 4.1 中间对比
+// A B (C D) F G
+// A B (E C) F G
+/* const prevChildren = [ */
+/*   h('p', { key: 'A' }, 'A'), */
+/*   h('p', { key: 'B' }, 'B'), */
+/*   h('p', { key: 'C', id: 'c-prev' }, 'C'), */
+/*   h('p', { key: 'D' }, 'D'), */
+/*   h('p', { key: 'F' }, 'F'), */
+/*   h('p', { key: 'G' }, 'G'), */
+/* ] */
+/* const nextChildren = [ */
+/*   h('p', { key: 'A' }, 'A'), */
+/*   h('p', { key: 'B' }, 'B'), */
+/*   h('p', { key: 'E' }, 'E'), */
+/*   h('p', { key: 'C', id: 'c-next' }, 'C'), */
+/*   h('p', { key: 'F' }, 'F'), */
+/*   h('p', { key: 'G' }, 'G'), */
+/* ] */
+// 4.2 优化
+// A B (C E D) F G
+// A B (E C) F G
+const prevChildren = [
+  h('p', { key: 'A' }, 'A'),
+  h('p', { key: 'B' }, 'B'),
+  h('p', { key: 'C', id: 'c-prev' }, 'C'),
+  h('p', { key: 'E' }, 'E'),
+  h('p', { key: 'D' }, 'D'),
+  h('p', { key: 'F' }, 'F'),
+  h('p', { key: 'G' }, 'G'),
+]
+const nextChildren = [
+  h('p', { key: 'A' }, 'A'),
+  h('p', { key: 'B' }, 'B'),
+  h('p', { key: 'E' }, 'E'),
+  h('p', { key: 'C', id: 'c-next' }, 'C'),
+  h('p', { key: 'F' }, 'F'),
+  h('p', { key: 'G' }, 'G'),
+]
 
 export default {
   name: "ArrayToArray",
