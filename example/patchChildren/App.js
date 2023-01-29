@@ -1,6 +1,6 @@
 import { h } from '../../lib/my-vue3-core.esm.js'
 
-/* import ArrayToArray from './ArrayToArray' */
+import ArrayToArray from './ArrayToArray.js'
 import ArrayToText from './ArrayToText.js'
 import TextToArray from './TextToArray.js'
 import TextToText from './TextToText.js'
@@ -18,7 +18,8 @@ export default {
       h(ArrayToText),
       h(TextToText),
       h(TextToArray),
-      /* h(ArrayToArray) */
+      h('p', {}, '-------------diff--------------'),
+      h(ArrayToArray)
     ])
   }
 }

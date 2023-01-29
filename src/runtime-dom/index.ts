@@ -19,8 +19,15 @@ function patchProp(el, key, prevVal, nextVal) {
   }
 }
 
-function insert(el, parent) {
-  parent.append(el)
+/**
+ * @description 添加dom元素 
+ * @param child
+ * @param parent
+ * @param anchor
+ */
+function insert(child, parent, anchor) {
+  // parent.append(el)
+  parent.insertBefore(child, anchor || null)
 }
 
 function remove(child) {
