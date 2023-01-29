@@ -16,7 +16,6 @@ export const App = {
     })
 
     const onChangePropsDemo1 = () => {
-      console.log(123)
       props.value.foo = 'new-foo'
     }
 
@@ -66,14 +65,14 @@ export const App = {
         h(
           'button',
           {
-            onClick: this.onChangePropsDemo1
+            onClick: this.onChangePropsDemo2
           },
           '2.值变成了undefined - 删除'
         ),
         h(
           'button',
           {
-            onClick: this.onChangePropsDemo1
+            onClick: this.onChangePropsDemo3
           },
           '3. 属性在新的里面没了 - 删除'
         ),

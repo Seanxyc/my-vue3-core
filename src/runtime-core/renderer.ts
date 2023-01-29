@@ -82,7 +82,6 @@ export function createRenderer(options) {
     * @param container
     */
   function patchElement(n1: any, n2: any, container: any) {
-    console.log('update')
     // TODO: 
     // props
     const oldProps = n1.props || {}
