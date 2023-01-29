@@ -1,5 +1,5 @@
 import { effect } from "../reactivity/effect"
-import { isEvent, isObject } from "../shared/index"
+import { EMPTY_OBJ, isEvent, isObject } from "../shared/index"
 import { ShapeFlags } from "../shared/ShapeFlags"
 import { createComponentInstance, setupComponent } from "./component"
 import { createAppAPI } from "./createApp"
@@ -84,13 +84,12 @@ export function createRenderer(options) {
   function patchElement(n1: any, n2: any, container: any) {
     // TODO: 
     // props
-    const oldProps = n1.props || {}
-    const newProps = n2.props || {}
+    const oldProps = n1.props || EMPTY_OBJ
+    const newProps = n2.props || EMPTY_OBJ
     const el = (n2.el = n1.el)
     patchProps(el, oldProps, newProps)
     // children
   }
-
 
   /**
   * @description 遍历新props和旧props对比
@@ -99,12 +98,22 @@ export function createRenderer(options) {
   * @param newProps
   */
   function patchProps(el: any, oldProps: any, newProps: any) {
-    for (const key in newProps) {
-      const prevProp = oldProps[key]
-      const nextProp = newProps[key]
+    if (oldProps !== newProps) {
+      for (const key in newProps) {
+        const prevProp = oldProps[key]
+        const nextProp = newProps[key]
 
-      if (prevProp !== nextProp) {
-        hostPatchProp(el, key, prevProp, nextProp)
+        if (prevProp !== nextProp) {
+          hostPatchProp(el, key, prevProp, nextProp)
+        }
+      }
+
+      if (oldProps !== EMPTY_OBJ) {
+        for (const key in oldProps) {
+          if (!(key in newProps)) {
+            hostPatchProp(el, key, oldProps[key], null)
+          }
+        }
       }
     }
   }
