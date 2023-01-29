@@ -25,12 +25,12 @@ export function createRenderer(options) {
   }
 
   /**
-  * @description patch
-  * @param n1 旧VNode
-  * @param n2 新VNode
-  * @param container 
-  * @param parentComponent 
-  */
+   * @description patch
+   * @param n1 旧VNode
+   * @param n2 新VNode
+   * @param container 
+   * @param parentComponent 
+   */
   function patch(n1: any, n2: any, container: any, parentComponent: any) {
     // ShapeFlags   element | stateful component
     const { type, shapeFlag } = n2
@@ -75,10 +75,39 @@ export function createRenderer(options) {
     }
   }
 
+  /**
+    * @description
+    * @param n1 oldVNode
+    * @param n2 newVNode 
+    * @param container
+    */
   function patchElement(n1: any, n2: any, container: any) {
+    console.log('update')
     // TODO: 
     // props
+    const oldProps = n1.props || {}
+    const newProps = n2.props || {}
+    const el = (n2.el = n1.el)
+    patchProps(el, oldProps, newProps)
     // children
+  }
+
+
+  /**
+  * @description 遍历新props和旧props对比
+  * @param el
+  * @param oldProps
+  * @param newProps
+  */
+  function patchProps(el: any, oldProps: any, newProps: any) {
+    for (const key in newProps) {
+      const prevProp = oldProps[key]
+      const nextProp = newProps[key]
+
+      if (prevProp !== nextProp) {
+        hostPatchProp(el, key, prevProp, nextProp)
+      }
+    }
   }
 
   function mountElement(vnode: any, container: any, parentComponent: any) {
@@ -109,7 +138,7 @@ export function createRenderer(options) {
         //   el.setAttribute(key, val)
         // }
         // 自定义渲染
-        hostPatchProp(el, key, val)
+        hostPatchProp(el, key, null, val)
       }
     }
 

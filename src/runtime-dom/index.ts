@@ -5,12 +5,12 @@ function createElement(type: any) {
   return document.createElement(type)
 }
 
-function patchProp(el, key, val) {
+function patchProp(el, key, prevVal, nextVal) {
   if (isEvent(key)) {
     const event = key.slice(2).toLowerCase()
-    el.addEventListener(event, val)
+    el.addEventListener(event, nextVal)
   } else {
-    el.setAttribute(key, val)
+    el.setAttribute(key, nextVal)
   }
 }
 
