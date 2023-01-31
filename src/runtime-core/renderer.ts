@@ -3,6 +3,7 @@ import getSequence from "../shared/getSequence"
 import { EMPTY_OBJ, isEvent, isObject } from "../shared/index"
 import { ShapeFlags } from "../shared/ShapeFlags"
 import { createComponentInstance, setupComponent } from "./component"
+import { shouldUpdateComponent } from "./componentUpdateUtils"
 import { createAppAPI } from "./createApp"
 import { Fragment, Text } from "./vnode"
 
@@ -53,7 +54,7 @@ export function createRenderer(options) {
           processElement(n1, n2, container, parentComponent, anchor)
         } else if (shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
           // 处理组件类型
-          propcessComponent(n1, n2, container, parentComponent, anchor)
+          processComponent(n1, n2, container, parentComponent, anchor)
         }
         break;
     }
@@ -371,8 +372,13 @@ export function createRenderer(options) {
   /**
    * @description 处理组件类型
    */
-  function propcessComponent(n1: any, n2: any, container: any, parentComponent: any, anchor: any) {
-    mountComponent(n2, container, parentComponent, anchor)
+  function processComponent(n1: any, n2: any, container: any, parentComponent: any, anchor: any) {
+    if (!n1) {
+
+      mountComponent(n2, container, parentComponent, anchor)
+    } else {
+      updateComponent(n1, n2)
+    }
   }
 
   /**
@@ -380,7 +386,7 @@ export function createRenderer(options) {
     */
   function mountComponent(initialVNode: any, container: any, parentComponent: any, anchor: any) {
     // 创建实例
-    const instance = createComponentInstance(initialVNode, parentComponent)
+    const instance = (initialVNode.component = createComponentInstance(initialVNode, parentComponent))
 
     // 执行setup
     setupComponent(instance)
@@ -390,10 +396,27 @@ export function createRenderer(options) {
   }
 
   /**
+  * @description 组件更新
+  * @param n1 oldVNode
+  * @param n2 newVNode
+  */
+  function updateComponent(n1: any, n2: any) {
+    const instance = (n2.component = n1.component)
+    if (shouldUpdateComponent(n1, n2)) {
+
+      instance.next = n2 // 下次要更新的虚拟节点
+      instance.update()
+    } else { // props未改变不需要更新
+      n2.el = n1.el
+      instance.vnode = n2
+    }
+  }
+
+  /**
     * @description 生成虚拟节点
     */
   function setupRenderEffect(instance: any, initialVNode: any, container: any, anchor: any) {
-    effect(() => {
+    instance.update = effect(() => {
 
       if (!instance.isMounted) {
         // init
@@ -407,6 +430,13 @@ export function createRenderer(options) {
         instance.isMounted = true
       } else {
         // update
+        const { next, vnode } = instance // vnode: 更新之前的虚拟节点  next: 下次要更新的虚拟节点
+        if (next) {
+          next.el = vnode.el
+
+          updateComponentPreRender(instance, next)
+        }
+
         const { proxy } = instance
         const subTree = instance.render.call(proxy) // 虚拟节点树
         const prevSubTree = instance.subTree
@@ -421,4 +451,11 @@ export function createRenderer(options) {
   return {
     createApp: createAppAPI(render)
   }
+}
+
+function updateComponentPreRender(instance, nextVNode) {
+  instance.vnode = nextVNode
+  instance.next = null
+  // update props
+  instance.props = nextVNode.props
 }

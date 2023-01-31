@@ -10,7 +10,9 @@ export function createVNode(type, props?, children?) {
     children,
     shapeFlag: getShapeFlag(type),
     el: null,
-    key: props && props.key
+    key: props && props.key,
+    component: null,
+    next: null // 下次要更新的虚拟节点
   }
 
   if (typeof children === "string") {
