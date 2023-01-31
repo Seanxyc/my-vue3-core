@@ -227,7 +227,7 @@ export function createRenderer(options) {
           newIndex = keyToNewIndexMap.get(prevChild.key) // (1)根据映射查找
         } else {
           // (2)没有设置key，遍历查找
-          for (let k = s2; k < e2; k++) {
+          for (let k = s2; k <= e2; k++) {
             if (isSameVNodeType(prevChild, c2[k])) {
               newIndex = k
               break
