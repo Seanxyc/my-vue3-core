@@ -8,6 +8,7 @@ const p = Promise.resolve()
  * @param fn
  */
 export function nextTick(fn: Function) {
+  // return fn ? Promise.resolve().then(fn()) : Promise.resolve()
   return fn ? p.then(fn()) : p
 }
 
