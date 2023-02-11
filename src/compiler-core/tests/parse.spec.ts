@@ -32,8 +32,6 @@ describe('element', () => {
 describe('text', () => {
   it('simple text', () => {
     const ast = baseParse('this is text')
-    console.log('-------------', ast.children[0]);
-
 
     expect(ast.children[0]).toStrictEqual({
       type: NodeTypes.TEXT,

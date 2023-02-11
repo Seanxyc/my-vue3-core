@@ -2,9 +2,11 @@ export const extend = Object.assign;
 
 export const EMPTY_OBJ = {}
 
-export const isObject = (val) => {
+export const isObject = val => {
   return val !== null && typeof val === "object";
 };
+
+export const isString = val => typeof val === 'string'
 
 export const hasChanged = (val, newVal) => {
   return !Object.is(val, newVal);
