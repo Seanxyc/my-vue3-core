@@ -23,7 +23,8 @@ describe('element', () => {
 
     expect(ast.children[0]).toStrictEqual({
       type: NodeTypes.ElEMEMT,
-      tag: 'div'
+      tag: 'div',
+      children: []
     })
   })
 })
@@ -31,10 +32,68 @@ describe('element', () => {
 describe('text', () => {
   it('simple text', () => {
     const ast = baseParse('this is text')
+    console.log('-------------', ast.children[0]);
+
 
     expect(ast.children[0]).toStrictEqual({
       type: NodeTypes.TEXT,
-      content: 'this is text'
+      content: 'this is text',
     })
   })
 })
+
+test('hello world', () => {
+  const ast = baseParse('<p>hi,{{ message }}</p>')
+
+  expect(ast.children[0]).toStrictEqual({
+    type: NodeTypes.ElEMEMT,
+    tag: 'p',
+    children: [
+      {
+        type: NodeTypes.TEXT,
+        content: 'hi,'
+      },
+      {
+        type: NodeTypes.INTERPOLATION,
+        content: {
+          type: NodeTypes.SIMPLE_EXPRESSTION,
+          content: 'message'
+        }
+      }
+    ]
+  })
+});
+
+test('nested element', () => {
+  const ast = baseParse('<div><p>hi,</p>{{ message }}</div>')
+
+  expect(ast.children[0]).toStrictEqual({
+    type: NodeTypes.ElEMEMT,
+    tag: 'div',
+    children: [
+      {
+        type: NodeTypes.ElEMEMT,
+        tag: 'p',
+        children: [
+          {
+            type: NodeTypes.TEXT,
+            content: 'hi,'
+          },
+        ]
+      },
+      {
+        type: NodeTypes.INTERPOLATION,
+        content: {
+          type: NodeTypes.SIMPLE_EXPRESSTION,
+          content: 'message'
+        }
+      }
+    ]
+  })
+});
+
+test('should throw error when there is no close tag', () => {
+  expect(() => {
+    baseParse("<div><span><p><span></p></span></div>")
+  }).toThrow("no close tag: span")
+});
