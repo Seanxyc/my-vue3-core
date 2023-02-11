@@ -1,8 +1,11 @@
-export function transform(root, options) {
+export function transform(root, options = {}) {
 
   const context = createTransformsContext(root, options)
   // 深度优先遍历
   traverseNode(root, context)
+
+  createRootCodegen(root)
+  // root.codegenNode
 }
 
 function traverseNode(node: any, context: any) {
@@ -33,5 +36,9 @@ function createTransformsContext(root: any, options: any) {
   }
 
   return context
+}
+
+function createRootCodegen(root: any) {
+  root.codegenNode = root.children[0]
 }
 
