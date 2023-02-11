@@ -1,5 +1,10 @@
 import { NodeTypes } from "./ast"
 
+const enum TagType {
+  Start,
+  End
+}
+
 export function baseParse(content: string) {
   const context = createParseContext(content)
   return createRoot(parseChildren(context))
@@ -8,9 +13,14 @@ export function baseParse(content: string) {
 function parseChildren(context) {
   const nodes: any = []
   let node
+  const s = context.source
 
-  if (context.source.startsWith("{{")) {
+  if (s.startsWith("{{")) {
     node = parseInterpolation(context)
+  } else if (s.startsWith("<")) {
+    if (/[a-z]/i.test(s[1])) {
+      node = parseElement(context)
+    }
   }
 
   nodes.push(node)
@@ -20,6 +30,7 @@ function parseChildren(context) {
 
 /**
  * @description: 解析插值
+ * @param {any} context
  */
 function parseInterpolation(context) {
   // {{message}}
@@ -46,6 +57,36 @@ function parseInterpolation(context) {
   }
 }
 
+/**
+ * @description: 解析element
+ * @param {any} context
+ */
+function parseElement(context: any) {
+  const element = parseTag(context, TagType.Start)
+  parseTag(context, TagType.End)
+  return element
+}
+
+/**
+ * @description: 解析tag
+ * @param {any} context
+ */
+function parseTag(context: any, type: TagType) {
+  // 1. 解析tag
+  const match: any = /^<\/?([a-z]*)/i.exec(context.source)
+  const tag = match[1]
+  // 2. 删除处理完成的内容
+  advanceBy(context, match[0].length)
+  advanceBy(context, 1)
+
+  if (type === TagType.End) return
+
+  return {
+    type: NodeTypes.ElEMEMT,
+    tag: 'div'
+  }
+}
+
 function createRoot(children: any) {
   return {
     children
@@ -61,4 +102,5 @@ function createParseContext(content: string): any {
 function advanceBy(context: any, length: number) {
   context.source = context.source.slice(length)
 }
+
 
