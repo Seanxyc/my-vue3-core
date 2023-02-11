@@ -27,3 +27,14 @@ describe('element', () => {
     })
   })
 })
+
+describe('text', () => {
+  it('simple text', () => {
+    const ast = baseParse('this is text')
+
+    expect(ast.children[0]).toStrictEqual({
+      type: NodeTypes.TEXT,
+      content: 'this is text'
+    })
+  })
+})

@@ -23,6 +23,10 @@ function parseChildren(context) {
     }
   }
 
+  if (!node) {
+    node = parseText(context)
+  }
+
   nodes.push(node)
 
   return nodes
@@ -43,10 +47,11 @@ function parseInterpolation(context) {
 
   const rawContentLength = closeIndex - openDelimiter.length
 
-  const rawContent = context.source.slice(0, rawContentLength)
+  const rawContent: any = parseTextData(context, rawContentLength)
+  // const rawContent = context.source.slice(0, rawContentLength)
   const content = rawContent.trim()
 
-  advanceBy(context, rawContentLength + closeDelimiter.length)
+  advanceBy(context, closeDelimiter.length)
 
   return {
     type: NodeTypes.INTERPOLATION,
@@ -87,6 +92,24 @@ function parseTag(context: any, type: TagType) {
   }
 }
 
+function parseText(context: any) {
+  parseTextData(context, context.source.length)
+
+  return {
+    type: NodeTypes.TEXT,
+    content: 'this is text'
+  }
+}
+
+function parseTextData(context: any, length: number) {
+  // 1. 获取content
+  const content = context.source.slice(0, length)
+  // 2. 删除处理完成的内容
+  advanceBy(context, content.length)
+
+  return content
+}
+
 function createRoot(children: any) {
   return {
     children
@@ -102,5 +125,6 @@ function createParseContext(content: string): any {
 function advanceBy(context: any, length: number) {
   context.source = context.source.slice(length)
 }
+
 
 
