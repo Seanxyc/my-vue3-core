@@ -82,6 +82,12 @@ function handleSetupResult(instance: any, setupResult: any) {
 function finishComponentSetup(instance: any) {
   const Component = instance.type
 
+  if (compiler && !Component.render) {
+    if (Component.template) {
+      Component.render = compiler(Component.template)
+    }
+  }
+
   // 如果组件实例定义了render
   if (Component.render) {
     instance.render = Component.render
@@ -98,3 +104,8 @@ function setCurrentInstance(instance) {
   currentInstance = instance
 }
 
+let compiler
+
+export function registerRuntimeCompiler(_compiler) {
+  compiler = _compiler
+}
