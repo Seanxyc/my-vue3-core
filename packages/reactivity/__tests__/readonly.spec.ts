@@ -1,11 +1,12 @@
 /*
  * @Author: seanchen
  * @Date: 2022-05-22 15:27:12
- * @LastEditTime: 2022-05-22 17:06:35
- * @LastEditors: seanchen
+ * @LastEditTime: 2023-02-12 18:31:14
+ * @LastEditors: Seanxyc seanxyc41@gmail.com
  * @Description:
  */
 import { readonly, isReadonly, isProxy } from "../src/reactive";
+import { vi } from 'vitest'
 
 describe("readonly", () => {
   it("happy path", () => {
@@ -28,7 +29,7 @@ describe("readonly", () => {
   });
 
   it("warn when call set", () => {
-    console.warn = jest.fn();
+    console.warn = vi.fn();
 
     const user = readonly({
       age: 10,
