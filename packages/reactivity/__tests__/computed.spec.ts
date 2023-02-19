@@ -1,6 +1,7 @@
 import { computed } from '../src/computed'
 import { reactive } from '../src/reactive'
 import { vi } from 'vitest'
+import { effect } from '../src/effect'
 
 describe('computed', () => {
   it('happy path', () => {
@@ -41,5 +42,23 @@ describe('computed', () => {
     // now it should compute
     expect(cValue.value).toBe(2)
     expect(getter).toHaveBeenCalledTimes(2)
+  })
+
+  it('nested computed', () => {
+    const obj = reactive({ foo: 1, bar: 2 })
+    let dummy = computed(() => obj.foo + obj.bar)
+
+    const runner = vi.fn(() => {
+      console.log(dummy.value)
+    })
+    effect(runner)
+
+    expect(runner).toHaveBeenCalledOnce()
+    expect(dummy.value).toBe(3)
+
+    obj.foo++
+
+    expect(runner).toHaveBeenCalledTimes(2)
+    expect(dummy.value).toBe(4)
   })
 })

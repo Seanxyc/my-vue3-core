@@ -1,6 +1,8 @@
 import { ReactiveEffect } from "./effect"
+import { trackRefValue, triggerRefValue } from "./ref"
 
 class ComputedRefImpl {
+  public dep = new Set()
   private _getter: any
   private _dirty: boolean = true
   private _value: any
@@ -12,11 +14,13 @@ class ComputedRefImpl {
       // scheduler 控制getter重复调用，并且在触发fn.run()时将dirty改为true
       if (!this._dirty) {
         this._dirty = true
+        triggerRefValue(this)
       }
     })
   }
 
   get value() {
+    trackRefValue(this)
     // 一开始执行getter
     if (this._dirty) {
       this._dirty = false

@@ -1,7 +1,7 @@
 /*
  * @Author: seanchen
  * @Date: 2022-05-22 17:02:13
- * @LastEditTime: 2023-02-19 20:18:38
+ * @LastEditTime: 2023-02-20 00:14:04
  * @LastEditors: Seanxyc seanxyc41@gmail.com
  * @Description:
  */
@@ -37,9 +37,17 @@ class RefImpl {
   }
 }
 
-function trackRefValue(ref) {
+export function trackRefValue(ref) {
   if (isTracking()) {
     trackEffects(ref.dep);
+  }
+}
+
+export function triggerRefValue(ref, newVal?: any) {
+  const dep = ref.dep
+  if (dep) {
+    const effectsToRun = new Set(dep)  // 避免无限执行
+    triggerEffects(effectsToRun)
   }
 }
 
