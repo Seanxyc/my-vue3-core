@@ -1,14 +1,15 @@
 /*
  * @Author: seanchen
  * @Date: 2022-05-04 22:28:00
- * @LastEditTime: 2023-02-19 19:21:17
+ * @LastEditTime: 2023-02-19 22:02:45
  * @LastEditors: Seanxyc seanxyc41@gmail.com
  * @Description:
  */
 import { extend } from '@my-vue/shared'
 
 let activeEffect
-let shouldTrack
+const effectStack: any[] = []
+const trackStack: boolean[] = []
 
 export class ReactiveEffect {
   private _fn: any
@@ -27,13 +28,15 @@ export class ReactiveEffect {
       return this._fn()
     }
 
-    shouldTrack = true
-    activeEffect = this
     cleanupEffect(this)
-    const result = this._fn()
 
-    // reset
-    shouldTrack = false
+    trackStack.push(true)
+    activeEffect = this
+    effectStack.push(this)
+
+    const result = this._fn()
+    effectStack.pop()
+    activeEffect = effectStack[effectStack.length - 1]
 
     return result
   }
@@ -72,7 +75,7 @@ export function trackEffects(dep) {
 }
 
 export function isTracking() {
-  return shouldTrack && activeEffect !== undefined
+  return trackStack[trackStack.length - 1] && activeEffect !== undefined
 }
 
 export function trigger(target, key) {

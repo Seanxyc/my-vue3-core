@@ -1,7 +1,7 @@
 /*
  * @Author: seanchen
  * @Date: 2022-05-04 22:11:41
- * @LastEditTime: 2023-02-19 19:01:19
+ * @LastEditTime: 2023-02-19 22:11:03
  * @LastEditors: Seanxyc seanxyc41@gmail.com
  * @Description:
  */
@@ -127,4 +127,27 @@ describe("effect", () => {
     obj.text = 'hi, vue'
     expect(runner).toHaveBeenCalledTimes(2)
   })
+
+  it('nested effect', () => {
+    let dummy1, dummy2
+    const obj = reactive({ foo: true, bar: true })
+    const effectFn1 = vi.fn(() => {
+      effect(effectFn2)
+      dummy1 = obj.foo
+    })
+    const effectFn2 = vi.fn(() => {
+      dummy2 = obj.bar
+    })
+    effect(effectFn1)
+
+    expect(effectFn1).toHaveBeenCalledTimes(1)
+    obj.foo = false
+    expect(dummy1).toBe(false)
+    expect(effectFn1).toHaveBeenCalledTimes(2)
+    expect(effectFn2).toHaveBeenCalledTimes(2)
+    obj.bar = false
+    expect(dummy2).toBe(false)
+    expect(effectFn1).toHaveBeenCalledTimes(2)
+    expect(effectFn2).toHaveBeenCalledTimes(4)
+  });
 });
