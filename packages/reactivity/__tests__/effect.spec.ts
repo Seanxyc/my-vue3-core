@@ -1,7 +1,7 @@
 /*
  * @Author: seanchen
  * @Date: 2022-05-04 22:11:41
- * @LastEditTime: 2023-02-12 18:31:43
+ * @LastEditTime: 2023-02-19 19:01:19
  * @LastEditors: Seanxyc seanxyc41@gmail.com
  * @Description:
  */
@@ -110,4 +110,21 @@ describe("effect", () => {
     stop(runner);
     expect(onStop).toBeCalledTimes(1);
   });
+
+  // clean up
+  it('cleanUp', () => {
+    let dummy
+    const obj = reactive({ ok: true, text: 'hello world' })
+    const runner = vi.fn(() => {
+      dummy = obj.ok ? obj.text : 'not'
+    })
+    effect(runner)
+    expect(runner).toHaveBeenCalledOnce()
+    expect(dummy).toBe('hello world')
+    obj.ok = false
+    expect(dummy).toBe('not')
+    expect(runner).toHaveBeenCalledTimes(2)
+    obj.text = 'hi, vue'
+    expect(runner).toHaveBeenCalledTimes(2)
+  })
 });

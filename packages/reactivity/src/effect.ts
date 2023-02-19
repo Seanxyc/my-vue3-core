@@ -1,7 +1,7 @@
 /*
  * @Author: seanchen
  * @Date: 2022-05-04 22:28:00
- * @LastEditTime: 2023-02-12 17:49:31
+ * @LastEditTime: 2023-02-19 19:21:17
  * @LastEditors: Seanxyc seanxyc41@gmail.com
  * @Description:
  */
@@ -29,6 +29,7 @@ export class ReactiveEffect {
 
     shouldTrack = true
     activeEffect = this
+    cleanupEffect(this)
     const result = this._fn()
 
     // reset
@@ -49,28 +50,20 @@ export class ReactiveEffect {
   }
 }
 
-let targetMap = new Map()
+let targetMap = new WeakMap()
 export function track(target, key) {
   if (!isTracking()) return
 
   // target -> key -> dep
   let depsMap = targetMap.get(target)
-  if (!depsMap) {
-    // 初始化
-    depsMap = new Map()
-    // 建立映射关系
-    targetMap.set(target, depsMap)
-  }
+  if (!depsMap) targetMap.set(target, depsMap = new Map())
 
-  let dep = depsMap.get(key)
-  if (!dep) {
-    dep = new Set()
-    depsMap.set(key, dep)
-  }
+  let deps = depsMap.get(key)
+  if (!deps) depsMap.set(key, deps = new Set())
 
-  if (dep.has(activeEffect)) return // 已经在dep中，不需要重复收集
+  if (deps.has(activeEffect)) return // 已经在dep中，不需要重复收集
 
-  trackEffects(dep)
+  trackEffects(deps)
 }
 
 export function trackEffects(dep) {
@@ -84,9 +77,12 @@ export function isTracking() {
 
 export function trigger(target, key) {
   const depsMap = targetMap.get(target)
-  const dep = depsMap.get(key)
+  if (!depsMap) return
 
-  triggerEffects(dep)
+  const deps = depsMap.get(key)
+  const effectsToRun = new Set(deps)  // 避免无限执行
+
+  triggerEffects(effectsToRun)
 }
 
 export function triggerEffects(dep) {

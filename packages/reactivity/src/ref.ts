@@ -1,7 +1,7 @@
 /*
  * @Author: seanchen
  * @Date: 2022-05-22 17:02:13
- * @LastEditTime: 2023-02-12 17:30:38
+ * @LastEditTime: 2023-02-19 20:18:38
  * @LastEditors: Seanxyc seanxyc41@gmail.com
  * @Description:
  */
@@ -31,7 +31,8 @@ class RefImpl {
     if (hasChanged(this._rawValue, newValue)) {
       this._rawValue = newValue;
       this._value = convert(newValue);
-      triggerEffects(this.dep);
+      const effectsToRun = new Set(this.dep)  // 避免无限执行
+      triggerEffects(effectsToRun);
     }
   }
 }
