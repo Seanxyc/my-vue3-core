@@ -1,7 +1,7 @@
 /*
  * @Author: seanchen
  * @Date: 2022-05-04 22:11:41
- * @LastEditTime: 2023-02-19 22:11:03
+ * @LastEditTime: 2023-02-19 22:15:09
  * @LastEditors: Seanxyc seanxyc41@gmail.com
  * @Description:
  */
@@ -150,4 +150,9 @@ describe("effect", () => {
     expect(effectFn1).toHaveBeenCalledTimes(2)
     expect(effectFn2).toHaveBeenCalledTimes(4)
   });
+
+  it('self increment', () => {
+    const obj = reactive({ foo: 1 })
+    effect(() => { obj.foo++ })
+  })
 });

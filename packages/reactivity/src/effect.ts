@@ -1,7 +1,7 @@
 /*
  * @Author: seanchen
  * @Date: 2022-05-04 22:28:00
- * @LastEditTime: 2023-02-19 22:02:45
+ * @LastEditTime: 2023-02-19 22:16:33
  * @LastEditors: Seanxyc seanxyc41@gmail.com
  * @Description:
  */
@@ -90,10 +90,12 @@ export function trigger(target, key) {
 
 export function triggerEffects(dep) {
   for (const effect of dep) {
-    if (effect.scheduler) {
-      effect.scheduler()
-    } else {
-      effect.run()
+    if (effect !== activeEffect) {
+      if (effect.scheduler) {
+        effect.scheduler()
+      } else {
+        effect.run()
+      }
     }
   }
 }
